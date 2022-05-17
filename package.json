@@ -14,8 +14,8 @@
   "scripts": {
     "start": "node artisan serve",
     "start:dev": "node artisan serve --watch",
-    "migrate": "prisma migrate dev --name init --schema database/schema.prisma",
-    "generate": "prisma generate --schema database/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --name init --schema database/schema.prisma",
+    "prisma:generate": "prisma generate --schema database/schema.prisma",
     "test": "npm run --silent lint:fix && node ./tests/main.js Unit E2E",
     "test:debug": "cross-env DEBUG=api:* && npm run --silent test",
     "test:coverage": "c8 npm run --silent test",

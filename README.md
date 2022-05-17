@@ -21,6 +21,32 @@
 
 <img src="https://raw.githubusercontent.com/AthennaIO/Scaffold/9d2247f0afce10b754e171b0ac23062eeb2f5024/.github/logo.svg" width="200px" align="right" hspace="30px" vspace="100px">
 
+## Running project
+
+> First creates your .env file:
+
+```shell
+cp .env.example .env
+```
+
+> Creates a new PostgreSQL container in port 5433 using docker:
+
+```shell
+docker run --name=postgres-devel -e POSTGRES_PASSWORD=root -p 5433:5432 -d postgres
+```
+
+> Install dependencies, generate your prisma files and migrate:
+
+```shell
+npm install && npm run prisma:generate && npm run prisma:migrate
+```
+
+> Fix generated prisma types for your IDE:
+
+```shell
+node artisan prisma:fix
+```
+
 ## Links
 
 > For project documentation [click here](https://athenna.io). If something is not clear in the documentation please open an issue in the [documentation repository](https://github.com/athennaio/docs)
