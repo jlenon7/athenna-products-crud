@@ -18,7 +18,9 @@ Artisan.command('hello', function () {
   .createHelp()
 
 Artisan.command('prisma:fix', async function () {
-  const prismaTypeFile = await new File(Path.nodeModules('.prisma/client/index.d.ts')).load()
+  const prismaTypeFile = await new File(
+    Path.nodeModules('.prisma/client/index.d.ts'),
+  ).load()
 
   await File.safeRemove(Path.nodeModules('@prisma/client/index.d.ts'))
   await prismaTypeFile.copy(Path.nodeModules('@prisma/client/index.d.ts'))

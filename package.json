@@ -15,7 +15,7 @@
     "start": "node artisan serve",
     "start:dev": "node artisan serve --watch",
     "prisma:migrate": "prisma migrate dev --name init --schema database/schema.prisma",
-    "prisma:generate": "prisma generate --schema database/schema.prisma",
+    "prisma:generate": "prisma generate --schema database/schema.prisma && node artisan prisma:fix",
     "test": "npm run --silent lint:fix && node ./tests/main.js Unit E2E",
     "test:debug": "cross-env DEBUG=api:* && npm run --silent test",
     "test:coverage": "c8 npm run --silent test",
@@ -45,13 +45,13 @@
     "#tests/*": "./tests/*.js"
   },
   "dependencies": {
-    "@athenna/artisan": "1.1.8",
+    "@athenna/artisan": "1.1.9",
     "@athenna/config": "1.1.0",
-    "@athenna/core": "1.5.5",
-    "@athenna/http": "1.3.7",
-    "@athenna/ioc": "1.1.8",
-    "@athenna/logger": "1.2.3",
-    "@prisma/client": "^3.14.0",
+    "@athenna/core": "1.5.6",
+    "@athenna/http": "1.3.8",
+    "@athenna/ioc": "1.1.9",
+    "@athenna/logger": "1.2.4",
+    "@prisma/client": "3.14.0",
     "@secjs/utils": "1.9.3",
     "source-map-support": "0.5.21"
   },
@@ -76,7 +76,7 @@
     "minimist": "1.2.6",
     "nodemon": "2.0.16",
     "prettier": "2.6.2",
-    "prisma": "^3.14.0",
+    "prisma": "3.14.0",
     "rimraf": "3.0.2",
     "typescript": "4.6.4"
   },

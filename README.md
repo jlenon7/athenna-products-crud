@@ -23,10 +23,10 @@
 
 ## Running project
 
-> First creates your .env file:
+> First creates your .env and .env.test file:
 
 ```shell
-cp .env.example .env
+cp .env.example .env && cp .env.example .env.test
 ```
 
 > Creates a new PostgreSQL container in port 5433 using docker:
@@ -35,16 +35,16 @@ cp .env.example .env
 docker run --name=postgres-devel -e POSTGRES_PASSWORD=root -p 5433:5432 -d postgres
 ```
 
-> Install dependencies, generate your prisma files and migrate:
+> Install dependencies, migrate database and generate your prisma files:
 
 ```shell
-npm install && npm run prisma:generate && npm run prisma:migrate
+npm install && npm run prisma:migrate && npm run prisma:generate
 ```
 
-> Fix generated prisma types for your IDE:
+> Start the project:
 
 ```shell
-node artisan prisma:fix
+npm start
 ```
 
 ## Links
