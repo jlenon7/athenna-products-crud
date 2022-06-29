@@ -10,23 +10,11 @@
 import { WelcomeServiceMock } from '#tests/Stubs/WelcomeServiceMock'
 
 import { assert } from '@japa/assert'
-import { Ignite } from '@athenna/core'
-import { Server } from '@athenna/http'
 import { pathToFileURL } from 'node:url'
+import { TestSuite } from '@athenna/core'
 import { specReporter } from '@japa/spec-reporter'
 import { runFailedTests } from '@japa/run-failed-tests'
-import { processCliArgs, configure, run, TestContext } from '@japa/runner'
-
-/*
-|--------------------------------------------------------------------------
-| Set test environment
-|--------------------------------------------------------------------------
-|
-| Set the test environment. This value will remove bootstrap logs and set
-| the `.env.${process.env.NODE_ENV}` file as default.
-*/
-
-process.env.NODE_ENV = 'test'
+import { processCliArgs, configure, run } from '@japa/runner'
 
 /*
 |--------------------------------------------------------------------------
@@ -55,38 +43,18 @@ ioc.mock('App/Services/WelcomeService', WelcomeServiceMock)
 */
 
 configure({
-  ...processCliArgs(process.argv.slice(2)),
+  ...processCliArgs(process.argv[2] === 'test' ? process.argv.slice(3) : process.argv.slice(2)),
   ...{
     suites: [
       {
         name: 'Unit',
         files: ['tests/Unit/**/*Test.js'],
-        configure(suite) {
-          suite.setup(async () => {
-            const application = await new Ignite().fire()
-
-            TestContext.macro('request', () => {})
-            TestContext.macro('application', application)
-
-            return () => {}
-          })
-        },
+        configure: suite => TestSuite.unitSuite(suite),
       },
       {
         name: 'E2E',
         files: ['tests/E2E/**/*Test.js'],
-        configure(suite) {
-          suite.setup(async () => {
-            const application = await new Ignite().fire()
-
-            await application.bootHttpServer()
-
-            TestContext.macro('request', Server.request)
-            TestContext.macro('application', application)
-
-            return async () => await application.shutdownHttpServer()
-          })
-        },
+        configure: suite => TestSuite.end2EndSuite(suite),
       },
     ],
     plugins: [assert(), runFailedTests()],
