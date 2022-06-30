@@ -1,22 +1,13 @@
+import { Product } from '#app/Models/Product'
+
 export class ProductController {
-  /** @type {import('#app/Services/ProductService').ProductService} */
-  #productService
-
-  /**
-   * Resolve any dependency of the service container
-   * inside the constructor.
-   */
-  constructor(productService) {
-    this.#productService = productService
-  }
-
   /**
    * Index method
    *
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async index({ response, data }) {
-    const body = await this.#productService.findAll(data.pagination)
+    const body = await Product.findAll(data.pagination)
 
     return response.status(200).send(body)
   }
@@ -27,7 +18,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async store({ request, response }) {
-    const body = await this.#productService.createOne(request.body)
+    const body = await Product.createOne(request.body)
 
     return response.status(201).send(body)
   }
@@ -38,7 +29,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async show({ response, params }) {
-    const body = await this.#productService.findOne(params.id)
+    const body = await Product.safeFindById(parseInt(params.id))
 
     return response.status(200).send(body)
   }
@@ -49,7 +40,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async update({ request, response, params }) {
-    const body = await this.#productService.updateOne(params.id, request.body)
+    const body = await Product.updateOne(parseInt(params.id), request.body)
 
     return response.status(200).send(body)
   }
@@ -60,7 +51,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async delete({ response, params, queries }) {
-    await this.#productService.deleteOne(params.id, queries.force)
+    await Product.deleteOne(parseInt(params.id), queries.force)
 
     return response.status(204)
   }

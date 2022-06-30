@@ -1,14 +1,20 @@
-import { Database } from '#providers/Facades/Database'
+import { Facade } from '@athenna/ioc'
+import { Model } from '#app/Models/Model'
 
-/*
-|--------------------------------------------------------------------------
-| Product model
-|--------------------------------------------------------------------------
-|
-| Here is where we define our model using the Database facade. Prisma has a
-| bug when using ESM. He is not rendering the types correctly from
-| `@prisma/client/index.d.ts` file in your IDE. To fix this you can run the
-| `node artisan prisma:fix` command.
-|
-*/
-export const Product = Database.product
+export class ProductModelDefinition extends Model {
+  /** @type {import('@prisma/client').Prisma.ProductDelegate} */
+  #prismaModel
+
+  constructor(database) {
+    super()
+
+    this.#prismaModel = database.product
+  }
+
+  query() {
+    return this.#prismaModel
+  }
+}
+
+/** @type {Facade & ProductModelDefinition} */
+export const Product = Facade.createFor('Athenna/Database/ProductModel')

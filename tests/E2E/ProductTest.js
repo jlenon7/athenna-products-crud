@@ -1,23 +1,16 @@
 import { test } from '@japa/runner'
-import { Database } from '#providers/Facades/Database'
+import { ProductFactory } from '#database/factories/ProductFactory'
 
 test.group('ProductTest', group => {
   /** @type {import('@prisma/client').Product} */
   let macbookPdt = null
 
   group.each.setup(async () => {
-    macbookPdt = await Database.product.create({
-      data: {
-        title: 'Macbook Pro 2021',
-        description: 'Beautifully macbook',
-      },
-    })
+    macbookPdt = await ProductFactory.createOne()
   })
 
   group.each.teardown(async () => {
-    await Database.product.deleteMany()
-
-    await Database.$disconnect()
+    await ProductFactory.truncate()
   })
 
   test('should be able to list all products paginated', async ({ request }) => {
@@ -80,7 +73,7 @@ test.group('ProductTest', group => {
       data: {
         statusCode: 404,
         code: 'E_NOT_FOUND',
-        message: 'Product not found',
+        message: 'Model not found',
       },
     })
   })
@@ -107,9 +100,7 @@ test.group('ProductTest', group => {
 
     response.assertStatusCode(204)
 
-    const product = await Database.product.findFirst({ where: { id: macbookPdt.id } })
-
-    assert.isNull(product)
+    await ProductFactory.assertNotExists({ id: macbookPdt.id })
   })
 
   test('should be able to soft delete a product', async ({ assert, request }) => {
@@ -117,8 +108,6 @@ test.group('ProductTest', group => {
 
     response.assertStatusCode(204)
 
-    const product = await Database.product.findFirst({ where: { id: macbookPdt.id } })
-
-    assert.isDefined(product.deletedAt)
+    await ProductFactory.assertSoftDelete({ id: macbookPdt.id })
   })
 })

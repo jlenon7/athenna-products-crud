@@ -13,4 +13,4 @@ import { Facade } from '@athenna/ioc'
 */
 
 /** @type {Facade & import('@prisma/client').PrismaClient} */
-export const Database = Facade.createFor('Athenna/Core/Database')
+export const Database = Facade.createFor('Athenna/Database')
