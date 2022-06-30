@@ -7,6 +7,7 @@ test.group('ProductTest', group => {
 
   group.each.setup(async () => {
     macbookPdt = await ProductFactory.createOne()
+    await ProductFactory.createMany(10)
   })
 
   group.each.teardown(async () => {
@@ -20,9 +21,9 @@ test.group('ProductTest', group => {
     response.assertBodyContains({
       data: [{ id: macbookPdt.id }],
       meta: {
-        itemCount: 1,
-        totalItems: 1,
-        totalPages: 1,
+        itemCount: 4,
+        totalItems: 11,
+        totalPages: 3,
         currentPage: 0,
         itemsPerPage: 4,
       },
@@ -30,9 +31,10 @@ test.group('ProductTest', group => {
         first: '/api/products?limit=4',
         previous: '/api/products?page=0&limit=4',
         next: '/api/products?page=1&limit=4',
-        last: '/api/products?page=1&limit=4',
+        last: '/api/products?page=3&limit=4',
       },
     })
+    await ProductFactory.assertCount(11)
   })
 
   test('should be able to create a new product', async ({ request }) => {
