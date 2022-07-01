@@ -1,18 +1,33 @@
 import { Facade } from '@athenna/ioc'
 import { Model } from '#app/Models/Model'
+import { Database } from '#providers/Facades/Database'
 
 export class ProductModelDefinition extends Model {
-  /** @type {import('@prisma/client').Prisma.ProductDelegate} */
-  #prismaModel
-
-  constructor(database) {
-    super()
-
-    this.#prismaModel = database.product
+  /**
+   * The primary key associated with the table.
+   *
+   *  @return {string}
+   */
+  get primaryKey() {
+    return 'id'
   }
 
+  /**
+   * The attributes that could be persisted in database.
+   *
+   *  @return {string[]}
+   */
+  get persistOnly() {
+    return ['title', 'description']
+  }
+
+  /**
+   * The main prisma model to make more specific queries.
+   *
+   * @return {import('@prisma/client').Prisma.ProductDelegate}
+   */
   query() {
-    return this.#prismaModel
+    return Database.product
   }
 }
 

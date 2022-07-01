@@ -27,10 +27,12 @@ export class DatabaseProvider extends ServiceProvider {
         this.container.singleton(
           'Athenna/Database/ProductModel',
           ProductModelDefinition,
+          false,
         )
         this.container.singleton(
           'Athenna/Database/ProductFactory',
           ProductFactoryDefinition,
+          false,
         )
       })
       .catch(reason => Log.error(reason))

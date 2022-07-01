@@ -1,18 +1,26 @@
 import { Facade } from '@athenna/ioc'
-import { faker } from '@faker-js/faker'
+import { Product } from '#app/Models/Product'
 import { Factory } from '#database/factories/Factory'
 
 export class ProductFactoryDefinition extends Factory {
-  constructor(productModel) {
-    super()
-
-    this.model = productModel
+  /**
+   * Define the model's for factory.
+   *
+   * @return {any}
+   */
+  get model() {
+    return Product
   }
 
+  /**
+   * Define the model's default state.
+   *
+   * @return {any}
+   */
   definition() {
     return {
-      title: faker.commerce.product(),
-      description: faker.commerce.productDescription(),
+      title: this.faker.commerce.product(),
+      description: this.faker.commerce.productDescription(),
     }
   }
 }

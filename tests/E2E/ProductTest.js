@@ -75,7 +75,7 @@ test.group('ProductTest', group => {
       data: {
         statusCode: 404,
         code: 'E_NOT_FOUND',
-        message: 'Model not found',
+        message: 'Model not found.',
       },
     })
   })

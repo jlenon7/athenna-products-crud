@@ -7,7 +7,9 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async index({ response, data }) {
-    const body = await Product.findAll(data.pagination)
+    const { page, limit, resourceUrl } = data.pagination
+
+    const body = await Product.paginate(page, limit, resourceUrl)
 
     return response.status(200).send(body)
   }
@@ -18,7 +20,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async store({ request, response }) {
-    const body = await Product.createOne(request.body)
+    const body = await Product.create(request.body)
 
     return response.status(201).send(body)
   }
@@ -29,7 +31,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async show({ response, params }) {
-    const body = await Product.safeFindById(parseInt(params.id))
+    const body = await Product.findOneOrFail(params.id)
 
     return response.status(200).send(body)
   }
@@ -40,7 +42,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async update({ request, response, params }) {
-    const body = await Product.updateOne(parseInt(params.id), request.body)
+    const body = await Product.update(params.id, request.body)
 
     return response.status(200).send(body)
   }
@@ -51,7 +53,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async delete({ response, params, queries }) {
-    await Product.deleteOne(parseInt(params.id), queries.force)
+    await Product.softDelete(params.id, queries.force)
 
     return response.status(204)
   }
