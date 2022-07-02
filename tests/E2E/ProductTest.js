@@ -15,6 +15,8 @@ test.group('ProductTest', group => {
   })
 
   test('should be able to list all products paginated', async ({ request }) => {
+    await ProductFactory.createMany(5, { deletedAt: new Date() })
+
     const response = await request.get('/api/products?limit=4')
 
     response.assertStatusCode(200)

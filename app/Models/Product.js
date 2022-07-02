@@ -22,6 +22,15 @@ export class ProductModelDefinition extends Model {
   }
 
   /**
+   * Return a boolean specifying if Model will use soft delete.
+   *
+   *  @return {boolean}
+   */
+  get isSoftDelete() {
+    return true
+  }
+
+  /**
    * The main prisma model to make more specific queries.
    *
    * @return {import('@prisma/client').Prisma.ProductDelegate}

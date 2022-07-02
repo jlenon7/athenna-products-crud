@@ -91,6 +91,12 @@ export class Factory {
     await this.model.query().deleteMany()
   }
 
+  /**
+   * Assert that the model has been softly deleted.
+   *
+   * @param {any} values
+   * @return {Promise<void>}
+   */
   async assertSoftDelete(values) {
     const model = await this.model.query().findFirst({ where: values })
 

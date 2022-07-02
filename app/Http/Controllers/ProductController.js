@@ -31,7 +31,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async show({ response, params }) {
-    const body = await Product.findOneOrFail(params.id)
+    const body = await Product.findByIdOrFail(params.id)
 
     return response.status(200).send(body)
   }
@@ -42,7 +42,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async update({ request, response, params }) {
-    const body = await Product.update(params.id, request.body)
+    const body = await Product.updateById(params.id, request.body)
 
     return response.status(200).send(body)
   }
@@ -53,7 +53,7 @@ export class ProductController {
    * @param {import('@athenna/http').ContextContract} ctx
    */
   async delete({ response, params, queries }) {
-    await Product.softDelete(params.id, queries.force)
+    await Product.deleteById(params.id, queries.force)
 
     return response.status(204)
   }
