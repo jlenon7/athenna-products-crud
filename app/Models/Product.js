@@ -22,6 +22,15 @@ export class ProductModelDefinition extends Model {
   }
 
   /**
+   * The attributes that will be selected in database operations.
+   *
+   *  @return {string[]}
+   */
+  get attributes() {
+    return ['id', 'title', 'description']
+  }
+
+  /**
    * Return a boolean specifying if Model will use soft delete.
    *
    *  @return {boolean}

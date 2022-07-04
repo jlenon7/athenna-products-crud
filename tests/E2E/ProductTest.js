@@ -52,9 +52,11 @@ test.group('ProductTest', group => {
       data: {
         title: payload.title,
         description: payload.description,
-        deletedAt: null,
       },
     })
+    response.assertBodyNotContainsKey('data.createdAt')
+    response.assertBodyNotContainsKey('data.updatedAt')
+    response.assertBodyNotContainsKey('data.deletedAt')
   })
 
   test('should be able to find a product', async ({ request }) => {
@@ -67,6 +69,9 @@ test.group('ProductTest', group => {
         description: macbookPdt.description,
       },
     })
+    response.assertBodyNotContainsKey('data.createdAt')
+    response.assertBodyNotContainsKey('data.updatedAt')
+    response.assertBodyNotContainsKey('data.deletedAt')
   })
 
   test('should throw an not found exception when product does not exist', async ({ assert, request }) => {
@@ -97,6 +102,9 @@ test.group('ProductTest', group => {
         description: payload.description,
       },
     })
+    response.assertBodyNotContainsKey('data.createdAt')
+    response.assertBodyNotContainsKey('data.updatedAt')
+    response.assertBodyNotContainsKey('data.deletedAt')
   })
 
   test('should be able to delete a product', async ({ assert, request }) => {

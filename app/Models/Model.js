@@ -3,14 +3,11 @@ import { Criteria } from '#app/Models/Criteria'
 import { NotFoundException } from '#app/Exceptions/NotFoundException'
 
 export class Model {
+  /** @type {any} */
+  #select = {}
+
   /** @type {import('#app/Models/Criteria').Criteria[]} */
   #criterias = []
-
-  constructor() {
-    if (this.isSoftDelete) {
-      this.addCriteria(new Criteria().where(this.DELETED_AT, null))
-    }
-  }
 
   /**
    * The data type of the auto-incrementing ID.
@@ -58,6 +55,15 @@ export class Model {
   }
 
   /**
+   * The attributes that will be selected in database operations.
+   *
+   *  @return {string[]}
+   */
+  get attributes() {
+    return ['*']
+  }
+
+  /**
    * The attributes that could be persisted in database.
    *
    *  @return {string[]}
@@ -82,9 +88,23 @@ export class Model {
    * @return {this}
    */
   addCriteria(criteria) {
+    if (this.hasCriteria(criteria)) {
+      return this
+    }
+
     this.#criterias.push(criteria)
 
     return this
+  }
+
+  /**
+   * Verify if model instance already have the criteria.
+   *
+   * @param {import('#app/Models/Criteria').Criteria} criteria
+   * @return {boolean}
+   */
+  hasCriteria(criteria) {
+    return !!this.#criterias.find(c => c === criteria)
   }
 
   /**
@@ -94,9 +114,11 @@ export class Model {
    * @return {this}
    */
   removeCriteria(criteria) {
-    const index = this.#criterias.findIndex(c => c === criteria)
+    if (!this.hasCriteria(criteria)) {
+      return this
+    }
 
-    delete this.#criterias[index]
+    delete this.#criterias[this.#criterias.findIndex(c => c === criteria)]
 
     return this
   }
@@ -104,7 +126,7 @@ export class Model {
   /**
    * The main prisma model to make more specific queries.
    *
-   * @return {any}
+   * @return {import('@prisma/client').Prisma.ProductDelegate}
    */
   query() {}
 
@@ -117,7 +139,14 @@ export class Model {
   async count(filters = {}) {
     filters = this.#setPkTypeOnFilters(filters)
 
-    return this.query().count({ ...this.#parseCriterias(), ...filters })
+    const query = {
+      ...this.#getParsedCriterias(),
+      ...filters,
+    }
+
+    delete query.select
+
+    return this.query().count(query)
   }
 
   /**
@@ -134,10 +163,9 @@ export class Model {
 
     const total = await this.count(filters)
 
-    const models = await this.query().findMany({
+    const models = await this.findMany({
       skip: page,
       take: limit,
-      ...this.#parseCriterias(),
       ...filters,
     })
 
@@ -155,10 +183,9 @@ export class Model {
   async forPage(page = 0, limit = 10, filters = {}) {
     filters = this.#setPkTypeOnFilters(filters)
 
-    return this.query().findMany({
+    return this.findMany({
       skip: page,
       take: limit,
-      ...this.#parseCriterias(),
       ...filters,
     })
   }
@@ -175,7 +202,7 @@ export class Model {
     if (!filters.where) filters.where = {}
 
     return this.query().findFirst({
-      ...this.#parseCriterias(),
+      ...this.#getParsedCriterias(),
       ...filters,
     })
   }
@@ -187,14 +214,7 @@ export class Model {
    * @return {Promise<any>}
    */
   async findOneOrFail(filters = {}) {
-    filters = this.#setPkTypeOnFilters(filters)
-
-    if (!filters.where) filters.where = {}
-
-    const model = await this.query().findFirst({
-      ...this.#parseCriterias(),
-      ...filters,
-    })
+    const model = await this.findOne(filters)
 
     if (!model) {
       throw new NotFoundException('Model not found.')
@@ -260,7 +280,10 @@ export class Model {
   async findMany(filters = {}) {
     filters = this.#setPkTypeOnFilters(filters)
 
-    return this.query().findMany({ ...this.#parseCriterias(), ...filters })
+    return this.query().findMany({
+      ...this.#getParsedCriterias(),
+      ...filters,
+    })
   }
 
   /**
@@ -271,8 +294,16 @@ export class Model {
    * @return {Promise<any>}
    */
   async create(data, ignorePersistOnly = false) {
+    this.#setDefaultCriterias()
+
+    const query = { data, select: this.#select }
+
+    if (!Object.entries(this.#select).length) {
+      delete query.select
+    }
+
     if (ignorePersistOnly) {
-      return this.query().create({ data })
+      return this.query().create(query)
     }
 
     const createObject = {}
@@ -286,7 +317,9 @@ export class Model {
       }
     })
 
-    return this.query().create({ data: createObject })
+    query.data = createObject
+
+    return this.query().create(query)
   }
 
   /**
@@ -300,13 +333,20 @@ export class Model {
   async update(filters = {}, data, ignorePersistOnly = false) {
     const model = await this.findOneOrFail(filters)
 
+    const query = {
+      data,
+      select: this.#select,
+      where: {
+        [this.primaryKey]: model[this.primaryKey],
+      },
+    }
+
+    if (!Object.entries(this.#select).length) {
+      delete query.select
+    }
+
     if (ignorePersistOnly) {
-      return this.query().update({
-        data,
-        where: {
-          [this.primaryKey]: model[this.primaryKey],
-        },
-      })
+      return this.query().update(query)
     }
 
     const updateObject = {}
@@ -320,12 +360,9 @@ export class Model {
       }
     })
 
-    return this.query().update({
-      data: updateObject,
-      where: {
-        [this.primaryKey]: model[this.primaryKey],
-      },
-    })
+    query.data = updateObject
+
+    return this.query().update(query)
   }
 
   /**
@@ -416,7 +453,9 @@ export class Model {
     return value
   }
 
-  #parseCriterias() {
+  #getParsedCriterias() {
+    this.#setDefaultCriterias()
+
     const criterias = {}
 
     this.#criterias.forEach(criteria => {
@@ -431,9 +470,30 @@ export class Model {
       if (criteria.getOrderBy()) {
         criterias.orderBy = criteria.getOrderBy()
       }
+
+      if (criteria.getDistinct()) {
+        criterias.distinct = criteria.getDistinct()
+      }
     })
 
     return criterias
+  }
+
+  #setDefaultCriterias() {
+    if (this.isSoftDelete) {
+      this.addCriteria(new Criteria().where(this.DELETED_AT, null))
+    }
+
+    if (this.attributes[0] === '*') {
+      return
+    }
+
+    const criteria = new Criteria()
+
+    this.attributes.forEach(attribute => criteria.select(attribute))
+
+    this.addCriteria(criteria)
+    this.#select = criteria.getSelect()
   }
 
   #setPkTypeOnFilters(filters) {
