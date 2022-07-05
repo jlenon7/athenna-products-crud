@@ -38,7 +38,7 @@ docker run --name=postgres-devel -e POSTGRES_PASSWORD=root -p 5433:5432 -d postg
 > Install dependencies, migrate database and generate your prisma files:
 
 ```shell
-npm install && npm run prisma:migrate && npm run prisma:generate
+npm install && node artisan db:migrate && node artisan db:generate
 ```
 
 > Start the project:
