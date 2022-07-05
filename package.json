@@ -17,9 +17,7 @@
     "test": "npm run --silent lint:fix && node artisan test",
     "test:debug": "cross-env DEBUG=api:* && npm run --silent test",
     "test:coverage": "c8 npm run --silent test",
-    "lint:fix": "eslint \"{app,bootstrap,config,database,providers,routes,storage,tests}/**/*.js\" --fix",
-    "prisma:migrate": "prisma migrate dev --name init --schema database/schema.prisma",
-    "prisma:generate": "prisma generate --schema database/schema.prisma && node artisan prisma:fix"
+    "lint:fix": "eslint \"{app,bootstrap,config,database,providers,routes,storage,tests}/**/*.js\" --fix"
   },
   "files": [
     "src/*.js",
@@ -45,10 +43,10 @@
     "#tests/*": "./tests/*.js"
   },
   "dependencies": {
-    "@athenna/artisan": "1.2.4",
+    "@athenna/artisan": "1.2.7",
     "@athenna/config": "1.1.1",
-    "@athenna/core": "1.6.4",
-    "@athenna/http": "1.4.0",
+    "@athenna/core": "1.6.6",
+    "@athenna/http": "1.4.5",
     "@athenna/ioc": "1.2.0",
     "@athenna/logger": "1.2.5",
     "@prisma/client": "3.14.0",
