@@ -6,14 +6,11 @@ export class WelcomeService {
 
   async findOne() {
     return {
-      name: Config.get('app.name', '@athenna/scaffold'),
-      domain: Config.get('http.domain', ''),
-      version: Config.get('app.version', '1.0.0'),
-      source: Config.get('app.source', 'https://github.com/AthennaIO'),
-      description: Config.get(
-        'app.description',
-        "The Athenna scaffold project used by 'athenna new project' command to create your project.",
-      ),
+      name: Config.get('app.name'),
+      domain: Config.get('http.domain'),
+      version: Config.get('app.version'),
+      source: Config.get('app.source'),
+      description: Config.get('app.description'),
     }
   }
 }

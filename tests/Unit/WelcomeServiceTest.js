@@ -1,7 +1,19 @@
+import { Path } from '@secjs/utils'
 import { Test } from '@athenna/test'
+import { Config } from '@athenna/config'
 import { WelcomeService } from '#app/Services/WelcomeService'
 
 export class WelcomeServiceTest extends Test {
+  /**
+   * Before all event. This method is executed
+   * before all tests.
+   *
+   * @return {void | Promise<void>}
+   */
+  async beforeAll() {
+    await Config.load(Path.config())
+  }
+
   /**
    * Run your test.
    *
