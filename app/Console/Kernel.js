@@ -1,4 +1,4 @@
-import { Path, Folder } from '@secjs/utils'
+import { TestCommandsLoader } from '@athenna/test'
 import { HttpCommandsLoader } from '@athenna/http'
 import { ArtisanLoader, ConsoleKernel } from '@athenna/artisan'
 
@@ -12,6 +12,7 @@ export class Kernel extends ConsoleKernel {
     return [
       ...ArtisanLoader.loadCommands(),
       ...HttpCommandsLoader.loadCommands(),
+      ...TestCommandsLoader.loadCommands(),
       import('#app/Console/Commands/DbSeed'),
       import('#app/Console/Commands/DbWipe'),
       import('#app/Console/Commands/DbMigrate'),
@@ -25,8 +26,9 @@ export class Kernel extends ConsoleKernel {
    * @return {import('@secjs/utils').File[] | Promise<any[]>}
    */
   get templates() {
-    const http = new Folder(Path.nodeModules('@athenna/http/templates'))
-
-    return [...http.loadSync().files]
+    return [
+      ...HttpCommandsLoader.loadTemplates(),
+      ...TestCommandsLoader.loadTemplates(),
+    ]
   }
 }

@@ -7,14 +7,13 @@
  * file that was distributed with this source code.
  */
 
-import { WelcomeServiceMock } from '#tests/Stubs/WelcomeServiceMock'
-
 import { assert } from '@japa/assert'
-import { pathToFileURL } from 'node:url'
-import { TestSuite } from '@athenna/core'
+import { TestSuite } from '@athenna/test'
 import { specReporter } from '@japa/spec-reporter'
 import { runFailedTests } from '@japa/run-failed-tests'
 import { processCliArgs, configure, run } from '@japa/runner'
+
+import { WelcomeServiceMock } from '#tests/Stubs/WelcomeServiceMock'
 
 /*
 |--------------------------------------------------------------------------
@@ -43,23 +42,23 @@ ioc.mock('App/Services/WelcomeService', WelcomeServiceMock)
 */
 
 configure({
-  ...processCliArgs(process.argv[2] === 'test' ? process.argv.slice(3) : process.argv.slice(2)),
+  ...processCliArgs(TestSuite.getArgs()),
   ...{
     suites: [
-      {
-        name: 'Unit',
-        files: ['tests/Unit/**/*Test.js'],
-        configure: suite => TestSuite.unitSuite(suite),
-      },
       {
         name: 'E2E',
         files: ['tests/E2E/**/*Test.js'],
         configure: suite => TestSuite.httpEnd2EndSuite(suite),
       },
+      {
+        name: 'Unit',
+        files: ['tests/Unit/**/*Test.js'],
+        configure: suite => TestSuite.unitSuite(suite),
+      },
     ],
     plugins: [assert(), runFailedTests()],
     reporters: [specReporter()],
-    importer: filePath => import(pathToFileURL(filePath).href),
+    importer: filePath => TestSuite.importer(filePath),
   },
 })
 

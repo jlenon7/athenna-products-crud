@@ -1,19 +1,15 @@
-import { test } from '@japa/runner'
+import { Test } from '@athenna/test'
 
-test.group('WelcomeTest', () => {
-  test('should return mocked welcome payload from API', async ({ assert, request }) => {
-    const statusCode = 200
-    const path = '/api/welcome'
+export class WelcomeTest extends Test {
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldReturnMockedWelcomePayloadFromApi({ request }) {
+    const response = await request.get('/api/welcome')
 
-    const response = await request.get(path)
-
-    response.assertStatusCode(statusCode)
-    response.assertBodyContains({
-      statusCode,
-      method: 'GET',
-      data: {
-        mock: true,
-      },
-    })
-  })
-})
+    response.assertStatusCode(200)
+    response.assertBodyContains({ data: { mock: true } })
+  }
+}

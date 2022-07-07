@@ -1,27 +1,33 @@
-import { test } from '@japa/runner'
+import { Test } from '@athenna/test'
 import { ProductFactory } from '#database/factories/ProductFactory'
 
-test.group('ProductTest', group => {
+export class ProductTest extends Test {
   /** @type {import('@prisma/client').Product} */
-  let macbookPdt = null
+  _macbookPdt
 
-  group.each.setup(async () => {
-    macbookPdt = await ProductFactory.createOne()
+  async beforeEach() {
+    this._macbookPdt = await ProductFactory.createOne()
+
     await ProductFactory.createMany(10)
-  })
+  }
 
-  group.each.teardown(async () => {
+  async afterEach() {
     await ProductFactory.truncate()
-  })
+  }
 
-  test('should be able to list all products paginated', async ({ request }) => {
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldBeAbleToListAllProductsPaginated({ request }) {
     await ProductFactory.createMany(5, { deletedAt: new Date() })
 
     const response = await request.get('/api/products?limit=4')
 
     response.assertStatusCode(200)
     response.assertBodyContains({
-      data: [{ id: macbookPdt.id }],
+      data: [{ id: this._macbookPdt.id }],
       meta: {
         itemCount: 4,
         totalItems: 11,
@@ -37,9 +43,14 @@ test.group('ProductTest', group => {
       },
     })
     await ProductFactory.assertCount(11)
-  })
+  }
 
-  test('should be able to create a new product', async ({ request }) => {
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldBeAbleToCreateANewProduct({ request }) {
     const payload = {
       title: 'iPhone X',
       description: 'Beautifully smartphone',
@@ -57,24 +68,34 @@ test.group('ProductTest', group => {
     response.assertBodyNotContainsKey('data.createdAt')
     response.assertBodyNotContainsKey('data.updatedAt')
     response.assertBodyNotContainsKey('data.deletedAt')
-  })
+  }
 
-  test('should be able to find a product', async ({ request }) => {
-    const response = await request.get(`/api/products/${macbookPdt.id}`)
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldBeAbleToFindAProduct({ request }) {
+    const response = await request.get(`/api/products/${this._macbookPdt.id}`)
 
     response.assertStatusCode(200)
     response.assertBodyContains({
       data: {
-        title: macbookPdt.title,
-        description: macbookPdt.description,
+        title: this._macbookPdt.title,
+        description: this._macbookPdt.description,
       },
     })
     response.assertBodyNotContainsKey('data.createdAt')
     response.assertBodyNotContainsKey('data.updatedAt')
     response.assertBodyNotContainsKey('data.deletedAt')
-  })
+  }
 
-  test('should throw an not found exception when product does not exist', async ({ assert, request }) => {
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldThrowAnNotFoundExceptionWhenProductDoesNotExist({ request }) {
     const response = await request.get('/api/products/0')
 
     response.assertStatusCode(404)
@@ -85,15 +106,20 @@ test.group('ProductTest', group => {
         message: 'Model not found.',
       },
     })
-  })
+  }
 
-  test('should be able to update a product', async ({ assert, request }) => {
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldBeAbleToUpdateAProduct({ request }) {
     const payload = {
       title: 'Macbook Pro 2022',
       description: 'Beautifully macbook v2',
     }
 
-    const response = await request.put(`/api/products/${macbookPdt.id}`, { payload })
+    const response = await request.put(`/api/products/${this._macbookPdt.id}`, { payload })
 
     response.assertStatusCode(200)
     response.assertBodyContains({
@@ -105,21 +131,31 @@ test.group('ProductTest', group => {
     response.assertBodyNotContainsKey('data.createdAt')
     response.assertBodyNotContainsKey('data.updatedAt')
     response.assertBodyNotContainsKey('data.deletedAt')
-  })
+  }
 
-  test('should be able to delete a product', async ({ assert, request }) => {
-    const response = await request.delete(`/api/products/${macbookPdt.id}?force=true`)
-
-    response.assertStatusCode(204)
-
-    await ProductFactory.assertNotExists({ id: macbookPdt.id })
-  })
-
-  test('should be able to soft delete a product', async ({ assert, request }) => {
-    const response = await request.delete(`/api/products/${macbookPdt.id}`)
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldBeAbleToDeleteAProduct({ request }) {
+    const response = await request.delete(`/api/products/${this._macbookPdt.id}?force=true`)
 
     response.assertStatusCode(204)
 
-    await ProductFactory.assertSoftDelete({ id: macbookPdt.id })
-  })
-})
+    await ProductFactory.assertNotExists({ id: this._macbookPdt.id })
+  }
+
+  /**
+   * Run your test.
+   *
+   * @param {import('#src/index').HttpTestContext} ctx
+   */
+  async shouldBeAbleToSoftDeleteAProduct({ request }) {
+    const response = await request.delete(`/api/products/${this._macbookPdt.id}`)
+
+    response.assertStatusCode(204)
+
+    await ProductFactory.assertSoftDelete({ id: this._macbookPdt.id })
+  }
+}
