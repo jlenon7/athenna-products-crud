@@ -16,17 +16,21 @@ export class Handler extends HttpExceptionHandler {
    * Ignore codes from being reported that are
    * included in this property. Example: ['E_RUNTIME_EXCEPTION']
    *
-   * @protected
+   * @return {string[]}
    */
-  ignoreCodes = []
+  get ignoreCodes() {
+    return []
+  }
 
   /**
    * Ignore status codes from being reported that
    * are included in this property. Example: [500]
    *
-   * @protected
+   * @return {number[]}
    */
-  ignoreStatuses = [404]
+  get ignoreStatuses() {
+    return [404]
+  }
 
   /**
    * The global exception handler of all HTTP requests.

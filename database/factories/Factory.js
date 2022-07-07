@@ -17,9 +17,9 @@ export class Factory {
   /**
    * Define the model's default state.
    *
-   * @return {any}
+   * @return {any|Promise<any>}
    */
-  definition() {}
+  async definition() {}
 
   /**
    * Make one model instance.

@@ -81,7 +81,7 @@ test.group('ProductTest', group => {
     response.assertBodyContains({
       data: {
         statusCode: 404,
-        code: 'E_NOT_FOUND',
+        code: 'E_NOT_FOUND_ERROR',
         message: 'Model not found.',
       },
     })

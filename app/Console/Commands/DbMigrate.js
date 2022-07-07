@@ -13,13 +13,21 @@ import { Command } from '@athenna/artisan'
 export class DbMigrate extends Command {
   /**
    * The name and signature of the console command.
+   *
+   * @return {string}
    */
-  signature = 'db:migrate'
+  get signature() {
+    return 'db:migrate'
+  }
 
   /**
    * The console command description.
+   *
+   * @return {string}
    */
-  description = 'Migrate the database migrations.'
+  get description() {
+    return 'Migrate the database migrations.'
+  }
 
   /**
    * Set additional flags in the commander instance.

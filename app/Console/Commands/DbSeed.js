@@ -13,13 +13,21 @@ import { Exec, File, Folder, Path } from '@secjs/utils'
 export class DbSeed extends Command {
   /**
    * The name and signature of the console command.
+   *
+   * @return {string}
    */
-  signature = 'db:seed'
+  get signature() {
+    return 'db:seed'
+  }
 
   /**
    * The console command description.
+   *
+   * @return {string}
    */
-  description = 'Seed the database with records.'
+  get description() {
+    return 'Seed the database with records.'
+  }
 
   /**
    * Set additional flags in the commander instance.

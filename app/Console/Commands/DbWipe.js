@@ -13,13 +13,21 @@ import { PrismaClient } from '@prisma/client'
 export class DbWipe extends Command {
   /**
    * The name and signature of the console command.
+   *
+   * @return {string}
    */
-  signature = 'db:wipe'
+  get signature() {
+    return 'db:wipe'
+  }
 
   /**
    * The console command description.
+   *
+   * @return {string}
    */
-  description = 'Drop all tables of database.'
+  get description() {
+    return 'Drop all tables of database.'
+  }
 
   /**
    * Set additional flags in the commander instance.

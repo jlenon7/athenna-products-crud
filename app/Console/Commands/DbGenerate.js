@@ -13,13 +13,21 @@ import { Command } from '@athenna/artisan'
 export class DbGenerate extends Command {
   /**
    * The name and signature of the console command.
+   *
+   * @return {string}
    */
-  signature = 'db:generate'
+  get signature() {
+    return 'db:generate'
+  }
 
   /**
    * The console command description.
+   *
+   * @return {string}
    */
-  description = 'Generate the prisma models.'
+  get description() {
+    return 'Generate the prisma models.'
+  }
 
   /**
    * Set additional flags in the commander instance.

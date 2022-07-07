@@ -1,6 +1,6 @@
 import { Exec } from '@secjs/utils'
 import { Criteria } from '#app/Models/Criteria'
-import { NotFoundException } from '#app/Exceptions/NotFoundException'
+import { NotFoundException } from '@athenna/http'
 
 export class Model {
   /** @type {any} */

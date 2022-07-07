@@ -17,7 +17,7 @@ export class ProductFactoryDefinition extends Factory {
    *
    * @return {any}
    */
-  definition() {
+  async definition() {
     return {
       title: this.faker.commerce.product(),
       description: this.faker.commerce.productDescription(),
