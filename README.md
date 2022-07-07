@@ -44,7 +44,7 @@ npm install && node artisan db:migrate && node artisan db:generate
 > Start the project:
 
 ```shell
-npm start
+npm artisan serve
 ```
 
 ## Links
