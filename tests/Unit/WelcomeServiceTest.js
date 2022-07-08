@@ -1,6 +1,7 @@
 import { Path } from '@secjs/utils'
 import { Test } from '@athenna/test'
 import { Config } from '@athenna/config'
+
 import { WelcomeService } from '#app/Services/WelcomeService'
 
 export class WelcomeServiceTest extends Test {

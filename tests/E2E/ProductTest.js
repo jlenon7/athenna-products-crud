@@ -18,7 +18,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldBeAbleToListAllProductsPaginated({ request }) {
     await ProductFactory.createMany(5, { deletedAt: new Date() })
@@ -48,7 +48,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldBeAbleToCreateANewProduct({ request }) {
     const payload = {
@@ -73,7 +73,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldBeAbleToFindAProduct({ request }) {
     const response = await request.get(`/api/products/${this._macbookPdt.id}`)
@@ -93,7 +93,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldThrowAnNotFoundExceptionWhenProductDoesNotExist({ request }) {
     const response = await request.get('/api/products/0')
@@ -111,7 +111,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldBeAbleToUpdateAProduct({ request }) {
     const payload = {
@@ -136,7 +136,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldBeAbleToDeleteAProduct({ request }) {
     const response = await request.delete(`/api/products/${this._macbookPdt.id}?force=true`)
@@ -149,7 +149,7 @@ export class ProductTest extends Test {
   /**
    * Run your test.
    *
-   * @param {import('#src/index').HttpTestContext} ctx
+   * @param {import('@athenna/test').HttpTestContext} ctx
    */
   async shouldBeAbleToSoftDeleteAProduct({ request }) {
     const response = await request.delete(`/api/products/${this._macbookPdt.id}`)
