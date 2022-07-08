@@ -8,7 +8,7 @@
  */
 
 import { Command } from '@athenna/artisan'
-import { Exec, File, Folder, Module, Path } from '@secjs/utils'
+import { Module, Path } from '@secjs/utils'
 
 export class DbSeed extends Command {
   /**
