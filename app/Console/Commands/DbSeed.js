@@ -8,7 +8,7 @@
  */
 
 import { Command } from '@athenna/artisan'
-import { Exec, File, Folder, Path } from '@secjs/utils'
+import { Exec, File, Folder, Module, Path } from '@secjs/utils'
 
 export class DbSeed extends Command {
   /**
@@ -54,34 +54,30 @@ export class DbSeed extends Command {
     this.simpleLog('[ SEEDING DATABASE ]', 'rmNewLineStart', 'bold', 'green')
 
     if (options.class) {
-      const file = await new File(
+      const Seed = await Module.getFrom(
         Path.seeders(options.class.concat('.js')),
-      ).load()
+      )
 
-      return Exec.getModule(import(file.href)).then(Seed => {
-        const seed = new Seed()
+      const seed = new Seed()
 
-        this.success(`Running ({yellow} "${file.name}") seeder.`)
+      this.success(`Running ({yellow} "${Seed.name}") seeder.`)
 
-        return seed.run()
-      })
+      return seed.run()
     }
 
-    const folder = await new Folder(Path.seeders()).load()
-    const seeds = folder.getFilesByPattern('*.js')
+    const seeds = await Module.getAllFrom(Path.seeders())
 
-    return seeds.map(file => {
-      if (file.name === 'Seeder') {
-        return null
+    seeds.forEach(Seed => {
+      // TODO Remove this verification when moving the project to pkg.
+      if (Seed.name === 'Seeder') {
+        return
       }
 
-      return Exec.getModule(import(file.href)).then(Seed => {
-        const seed = new Seed()
+      const seed = new Seed()
 
-        this.success(`Running ({yellow} "${file.name}") seeder.`)
+      this.success(`Running ({yellow} "${Seed.name}") seeder.`)
 
-        return seed.run()
-      })
+      return seed.run()
     })
   }
 }

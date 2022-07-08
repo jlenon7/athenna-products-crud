@@ -67,8 +67,6 @@ export class DbGenerate extends Command {
     const prismaCli = Path.bin('prisma')
     let command = `${prismaCli} generate`
 
-    // prisma generate --schema database/schema.prisma && node artisan prisma:fix
-
     command = command.concat(` --schema ${options.schema}`)
 
     if (options.prismaArgs) {
